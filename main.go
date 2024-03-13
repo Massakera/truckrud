@@ -5,10 +5,13 @@ package main
 import (
 	"truckrud/controllers"
 	"truckrud/database"
+	docs "truckrud/docs"
 	"truckrud/routes"
 	"truckrud/services"
 
 	"github.com/gin-gonic/gin"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func main() {
@@ -26,7 +29,8 @@ func main() {
 	linkController := controllers.NewDriverVehicleLinkController(linkService)
 
 	r := gin.Default()
-
+	docs.SwaggerInfo.BasePath = "/api/v1"
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	routes.SetupRoutes(r, driverController, vehicleController, linkController)
 
 	r.Run()
