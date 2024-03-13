@@ -17,3 +17,8 @@ type IVehicleService interface {
 	UpdateVehicle(id uint, vehicle models.Vehicle) (models.Vehicle, error)
 	DeleteVehicle(id uint) error
 }
+
+type IDriverVehicleLinkService interface {
+	LinkDriverToVehicle(driverID, vehicleID uint) (models.DriverVehicleLink, error)
+	UnlinkDriverFromVehicle(linkID uint) error
+}

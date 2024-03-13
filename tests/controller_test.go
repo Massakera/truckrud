@@ -245,3 +245,48 @@ func TestDeleteVehicle(t *testing.T) {
 
 	mockService.AssertExpectations(t)
 }
+
+func TestLinkDriverToVehicle(t *testing.T) {
+	mockService := new(mocks.MockDriverVehicleLinkService)
+	controller := controllers.NewDriverVehicleLinkController(mockService)
+
+	mockLink := models.DriverVehicleLink{DriverID: 1, VehicleID: 2}
+	mockService.On("LinkDriverToVehicle", mock.AnythingOfType("uint"), mock.AnythingOfType("uint")).Return(mockLink, nil)
+
+	router := gin.Default()
+	router.POST("/link/driver-to-vehicle", controller.LinkDriverToVehicle)
+
+	linkPayload, _ := json.Marshal(mockLink)
+	req, _ := http.NewRequest(http.MethodPost, "/link/driver-to-vehicle", bytes.NewBuffer(linkPayload))
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusCreated, w.Code)
+
+	var response models.DriverVehicleLink
+	err := json.Unmarshal(w.Body.Bytes(), &response)
+	assert.NoError(t, err)
+	assert.Equal(t, mockLink, response)
+
+	mockService.AssertExpectations(t)
+}
+
+func TestUnlinkDriverFromVehicle(t *testing.T) {
+	mockService := new(mocks.MockDriverVehicleLinkService)
+	controller := controllers.NewDriverVehicleLinkController(mockService)
+
+	linkID := uint(1)
+	mockService.On("UnlinkDriverFromVehicle", linkID).Return(nil)
+
+	router := gin.Default()
+	router.DELETE("/unlink/driver-from-vehicle/:id", controller.UnlinkDriverFromVehicle)
+
+	req, _ := http.NewRequest(http.MethodDelete, "/unlink/driver-from-vehicle/1", nil)
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Contains(t, w.Body.String(), "Link removed successfully")
+
+	mockService.AssertExpectations(t)
+}
