@@ -16,13 +16,13 @@ func NewVehicleService(db *gorm.DB) *VehicleService {
 
 func (s *VehicleService) GetAllVehicles() ([]models.Vehicle, error) {
 	var vehicles []models.Vehicle
-	result := s.DB.Find(&vehicles)
+	result := s.DB.Preload("Drivers").Find(&vehicles)
 	return vehicles, result.Error
 }
 
 func (s *VehicleService) GetVehicleByID(id uint) (models.Vehicle, error) {
 	var vehicle models.Vehicle
-	result := s.DB.First(&vehicle, id)
+	result := s.DB.Preload("Drivers").First(&vehicle, id)
 	return vehicle, result.Error
 }
 

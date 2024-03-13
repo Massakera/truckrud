@@ -16,13 +16,13 @@ func NewDriverService(db *gorm.DB) *DriverService {
 
 func (s *DriverService) GetAllDrivers() ([]models.Driver, error) {
 	var drivers []models.Driver
-	result := s.DB.Find(&drivers)
+	result := s.DB.Preload("Vehicles").Find(&drivers)
 	return drivers, result.Error
 }
 
 func (s *DriverService) GetDriverByID(id uint) (models.Driver, error) {
 	var driver models.Driver
-	result := s.DB.First(&driver, id)
+	result := s.DB.Preload("Vehicles").First(&driver, id)
 	return driver, result.Error
 }
 
