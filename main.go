@@ -29,7 +29,7 @@ func main() {
 	linkController := controllers.NewDriverVehicleLinkController(linkService)
 
 	r := gin.Default()
-	docs.SwaggerInfo.BasePath = "/api/v1"
+	docs.SwaggerInfo.BasePath = ""
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	routes.SetupRoutes(r, driverController, vehicleController, linkController)
 
